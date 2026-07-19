@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: shopez_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: shopez
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - shopez-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: shopez_mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMIN_USERNAME: admin
+      ME_CONFIG_MONGODB_ADMIN_PASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017
+    depends_on:
+      - mongodb
+    networks:
+      - shopez-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  shopez-network:
+    driver: bridge
